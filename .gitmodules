@@ -1,0 +1,4 @@
+[submodule "externalLib/hello_imgui"]
+	path = externalLib/hello_imgui
+	url = https://github.com/XMNXofficial/hello_imgui.git
+	branch = hello_imgui_gif
