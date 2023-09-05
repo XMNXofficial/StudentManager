@@ -3,6 +3,7 @@
 #include <hello_imgui.h>
 #include "ui/operate.hpp"//学生操作面板
 #include "ui/student_list.hpp"//学生列表
+#include "ui/accomplishment.hpp"//学生素养详细信息
 ImFont* gFont = nullptr;
 
 int main()
@@ -67,7 +68,7 @@ HelloImGui::DockingParams show_dockinggui()
 	HelloImGui::DockableWindow window_accomplishment;
 	window_accomplishment.label = "window_accomplishment";//设置窗口标题
 	window_accomplishment.dockSpaceName = "dock_accomplishment";//把窗口放在dock空间中
-	window_accomplishment.GuiFunction = []{  };//界面渲染
+	window_accomplishment.GuiFunction = [] { ui_accomplishment(); };//界面渲染
 
 	//创建dock窗口:window_operate 学生操作面板
 	HelloImGui::DockableWindow window_operate;

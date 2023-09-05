@@ -2,9 +2,9 @@
 
 #创建lib
 add_library(StudentManager_ui
-"operate.cpp"
- "student_list.cpp"
-
+	"operate.cpp"
+	"student_list.cpp"
+	"accomplishment.cpp"
 )
 
 #引用imgui文件夹
