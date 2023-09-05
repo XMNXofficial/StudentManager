@@ -1,5 +1,9 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
+#解决奇数个数中文在msvc上无法编译utf-8不带bom的代码文件
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
 #开启MSVC热重载
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -9,8 +13,24 @@ endif()
 #项目
 project ("StudentManager")
 
+#添加imgui
+add_subdirectory (externalLib/hello_imgui)
+list(APPEND CMAKE_MODULE_PATH ${HELLOIMGUI_CMAKE_PATH})
+include(hello_imgui_add_app)
+
+#项目模块化
+add_subdirectory(src)
+
 #目标
-add_executable (StudentManager "StudentManager.cpp" "StudentManager.h")
+hello_imgui_add_app (StudentManager "StudentManager.cpp" "StudentManager.hpp")
+
+#项目头文件
+target_include_directories(StudentManager PUBLIC include)
+
+#项目模块
+target_link_libraries(StudentManager PUBLIC StudentManager_data)#data模块
+target_link_libraries(StudentManager PUBLIC StudentManager_ui)#ui模块
+target_link_libraries(StudentManager PUBLIC StudentManager_extern)#ui模块
 
 #开启C++20标准
 if (CMAKE_VERSION VERSION_GREATER 3.12)
