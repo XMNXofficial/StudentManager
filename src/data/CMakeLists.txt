@@ -2,5 +2,5 @@
 
 add_library(StudentManager_data
 "rules.cpp"
-"students.cpp"
+"student_data.cpp"
 )

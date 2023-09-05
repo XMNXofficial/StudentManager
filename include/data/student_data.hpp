@@ -1,6 +1,6 @@
 #include<iostream>
 #include<vector>
-namespace students {
+namespace student_data {
 
 	//素养
 	struct accomplishment {
@@ -32,6 +32,8 @@ namespace students {
 		}
 
 	public:
+		StudentInformation();
+		~StudentInformation() = default;
 		std::vector<student>students;
 
 		//添加学生信息
