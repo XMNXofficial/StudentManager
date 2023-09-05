@@ -2,3 +2,6 @@
 	path = externalLib/hello_imgui
 	url = https://github.com/XMNXofficial/hello_imgui.git
 	branch = hello_imgui_gif
+[submodule "externalLib/sqlite"]
+	path = externalLib/sqlite
+	url = https://github.com/XMNXofficial/sqlite.git
