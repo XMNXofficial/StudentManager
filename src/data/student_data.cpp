@@ -25,7 +25,7 @@ namespace student_data {
 				bool isIncrease = (j % 2 == 0); // 随机选择是增加还是减少
 				float score = scoreDistribution(generator);
 
-				addAccomplishment(school_id, behavior, isIncrease, score);
+				addAccomplishment(school_id, behavior, "test-rule", "test-operator", isIncrease, score);
 			}
 		}
 	}
@@ -61,11 +61,13 @@ namespace student_data {
 	}
 
 	//添加学生素养信息
-	void StudentInformation::addAccomplishment(std::string school_id, std::string behavior, bool isIncrease, float scoure) {
+	void StudentInformation::addAccomplishment(std::string school_id, std::string behavior, std::string belong, std::string accomplishment_operator, bool isIncrease, float scoure) {
 		int index = findStudent(school_id);
 		if (index >= 0) {
 			accomplishment a;
 			a.behavior = behavior;
+			a.belong = belong;
+			a.accomplishment_operator = accomplishment_operator;
 			a.isIncrease = isIncrease;
 			a.scoure = scoure;
 			students[index].accomplishments.push_back(a);

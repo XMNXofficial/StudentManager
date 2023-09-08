@@ -5,8 +5,11 @@ namespace student_data {
 	//素养
 	struct accomplishment {
 		std::string behavior;//行为
-		bool isIncrease;
-		float scoure;
+		std::string belong;//所属条款
+		std::string accomplishment_operator;//素养操作者(负责人)
+		bool isIncrease = false;
+		float scoure = 0.0f;
+
 	};
 
 	//学生信息
@@ -46,7 +49,7 @@ namespace student_data {
 		void deleteStudent(std::string school_id);
 
 		//添加学生素养信息
-		void addAccomplishment(std::string school_id, std::string behavior, bool isIncrease, float scoure);
+		void addAccomplishment(std::string school_id, std::string behavior, std::string belong, std::string accomplishment_operator, bool isIncrease, float scoure);
 
 		//修改学生素养信息
 		void modifyAccomplishment(std::string school_id, int index, std::string behavior, bool isIncrease, float scoure);

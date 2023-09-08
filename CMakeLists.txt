@@ -18,19 +18,28 @@ add_subdirectory (externalLib/hello_imgui)
 list(APPEND CMAKE_MODULE_PATH ${HELLOIMGUI_CMAKE_PATH})
 include(hello_imgui_add_app)
 
+#添加sqlite
+add_subdirectory(externalLib/sqlite)
+
 #项目模块化
 add_subdirectory(src)
 
 #目标
 hello_imgui_add_app (StudentManager "StudentManager.cpp" "StudentManager.hpp")
 
-#项目头文件
-target_include_directories(StudentManager PUBLIC include)
+#自己的模块
+	#项目头文件
+		target_include_directories(StudentManager PUBLIC include)
+	#项目模块
+		target_link_libraries(StudentManager PUBLIC StudentManager_data)#data模块
+		target_link_libraries(StudentManager PUBLIC StudentManager_ui)#ui模块
+		target_link_libraries(StudentManager PUBLIC StudentManager_extern)#ui模块
+		target_link_libraries(StudentManager PUBLIC StudentManager_core)#core模块(sqlite调用)
 
-#项目模块
-target_link_libraries(StudentManager PUBLIC StudentManager_data)#data模块
-target_link_libraries(StudentManager PUBLIC StudentManager_ui)#ui模块
-target_link_libraries(StudentManager PUBLIC StudentManager_extern)#ui模块
+#调用模块
+	#链接sqlite
+		target_include_directories(StudentManager PUBLIC externalLib/sqlite/include)
+		target_link_libraries(StudentManager PUBLIC sqlite)#sqlite模块
 
 #开启C++20标准
 if (CMAKE_VERSION VERSION_GREATER 3.12)
