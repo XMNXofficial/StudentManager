@@ -25,13 +25,14 @@ int main()
 		gFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyhbd.ttc", 40.0f, nullptr, b.Data); };
 	//p.imGuiWindowParams.tweakedTheme = { ImGuiTheme::ImGuiTheme_ImGuiColorsLight,ImGuiTheme::ImGuiThemeTweaks() };
 	p.imGuiWindowParams.showMenuBar = true;
-	p.imGuiWindowParams.showMenu_View = false;//不显示默认的view菜单1
+	p.imGuiWindowParams.showMenu_View = false;//不显示默认的view菜单
 	p.imGuiWindowParams.showStatusBar = false;
 	p.imGuiWindowParams.rememberStatusBarSettings = false;
 	p.imGuiWindowParams.rememberTheme = false;
 	p.imGuiWindowParams.Enable_MainDockSpace_NoResize = true;
 	p.imGuiWindowParams.Enable_MainDockSpace_NoTabBar = true;
 	HelloImGui::Run(p);
+	
 	return 0;
 }
 
