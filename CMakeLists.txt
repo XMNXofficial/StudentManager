@@ -13,13 +13,15 @@ endif()
 #项目
 project ("StudentManager")
 
-#添加imgui
-add_subdirectory (externalLib/hello_imgui)
-list(APPEND CMAKE_MODULE_PATH ${HELLOIMGUI_CMAKE_PATH})
-include(hello_imgui_add_app)
-
-#添加sqlite
-add_subdirectory(externalLib/sqlite)
+#添加第三方模块
+	#添加imgui
+		add_subdirectory (externalLib/hello_imgui)
+		list(APPEND CMAKE_MODULE_PATH ${HELLOIMGUI_CMAKE_PATH})
+		include(hello_imgui_add_app)
+	#添加sqlite
+		add_subdirectory(externalLib/sqlite)
+	#添加spdlog
+		add_subdirectory(externalLib/spdlog)
 
 #项目模块化
 add_subdirectory(src)
@@ -40,6 +42,9 @@ hello_imgui_add_app (StudentManager "StudentManager.cpp" "StudentManager.hpp")
 	#链接sqlite
 		target_include_directories(StudentManager PUBLIC externalLib/sqlite/include)
 		target_link_libraries(StudentManager PUBLIC sqlite)#sqlite模块
+	#链接spdlog
+		target_include_directories(StudentManager PUBLIC externalLib/spdlog/include)
+		target_link_libraries(StudentManager PUBLIC spdlog)#spdlog模块
 
 #开启C++20标准
 if (CMAKE_VERSION VERSION_GREATER 3.12)
