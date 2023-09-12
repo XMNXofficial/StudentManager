@@ -5,5 +5,5 @@ add_library(StudentManager_core
 )
 
 #链接sqlite
-	target_include_directories(StudentManager_core PUBLIC ${CMAKE_SOURCE_DIR}/externalLib/sqlite/include/)
+	target_include_directories(StudentManager_core PUBLIC ${CMAKE_SOURCE_DIR}/externalLib/sqlite/include)
 	target_link_libraries(StudentManager_core PUBLIC sqlite)

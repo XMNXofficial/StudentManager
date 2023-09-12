@@ -2,6 +2,7 @@
 #include<vector>
 #include"data/rules.hpp"
 #include"data/student_data.hpp"
+#include"core/data_base.hpp"
 //operate
 extern char buffer_grade[1024];
 extern char buffer_name[1024];
@@ -17,3 +18,4 @@ extern rules school_rule;//备注:在这里只是告诉编译器有个class的�
 //list
 extern student_data::StudentInformation students;
 extern int select_student_list_index;//学生列表
+extern data_base DataBase;
