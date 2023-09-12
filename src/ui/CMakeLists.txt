@@ -5,6 +5,7 @@ add_library(StudentManager_ui
 	"operate.cpp"
 	"student_list.cpp"
 	"accomplishment.cpp"
+	"DevelopWindow.cpp"
 )
 
 #引用imgui文件夹

@@ -4,8 +4,9 @@
 #include "ui/operate.hpp"//学生操作面板
 #include "ui/student_list.hpp"//学生列表
 #include "ui/accomplishment.hpp"//学生素养详细信息
+#include "ui/DevelopWindow.hpp"
 ImFont* gFont = nullptr;
-
+DevelopWindow Develop;
 int main()
 {
 	HelloImGui::RunnerParams p;
@@ -32,7 +33,7 @@ int main()
 	p.imGuiWindowParams.Enable_MainDockSpace_NoResize = true;
 	p.imGuiWindowParams.Enable_MainDockSpace_NoTabBar = true;
 	HelloImGui::Run(p);
-	
+
 	return 0;
 }
 
@@ -69,20 +70,20 @@ HelloImGui::DockingParams show_dockinggui()
 	HelloImGui::DockableWindow window_accomplishment;
 	window_accomplishment.label = "window_accomplishment";//设置窗口标题
 	window_accomplishment.dockSpaceName = "dock_accomplishment";//把窗口放在dock空间中
-	window_accomplishment.GuiFunction = [] { ui_accomplishment(); };//界面渲染
+	window_accomplishment.GuiFunction = [] { ui_accomplishment(); Develop.gui(); };//界面渲染
 
 	//创建dock窗口:window_operate 学生操作面板
 	HelloImGui::DockableWindow window_operate;
 	window_operate.label = "window_operate";//设置窗口标题
 	window_operate.dockSpaceName = "MainDockSpace";//把窗口放在dock空间中,这里放在主空间中
-	window_operate.GuiFunction = []{ ui_operate(); };//界面渲染
+	window_operate.GuiFunction = [] { ui_operate(); };//界面渲染
 	window_operate.imGuiWindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize;//设置窗口属性
 
 	//创建dock窗口:window_list 学生列表
 	HelloImGui::DockableWindow window_list;
 	window_list.label = "window_list";//设置窗口标题
 	window_list.dockSpaceName = "dock_list";//把窗口放在dock空间中
-	window_list.GuiFunction = []{ ui_list(); };//界面渲染
+	window_list.GuiFunction = [] { ui_list(); };//界面渲染
 
 	w.push_back(window_accomplishment);
 	w.push_back(window_operate);
