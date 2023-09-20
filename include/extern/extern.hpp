@@ -3,6 +3,8 @@
 #include"data/rules.hpp"
 #include"data/student_data.hpp"
 #include"core/data_base.hpp"
+#include"StudentManager.hpp"
+
 //operate
 extern char buffer_grade[1024];
 extern char buffer_name[1024];
@@ -16,6 +18,5 @@ extern int select_rules_1;
 extern int select_rules_2;
 extern rules school_rule;//备注:在这里只是告诉编译器有个class的全局变量,它不会被初始化和构造.它会在extern.cpp中被构造和初始化
 //list
-extern student_data::StudentInformation students;
 extern int select_student_list_index;//学生列表
-extern data_base DataBase;
+extern StudentManager MainAPP;

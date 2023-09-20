@@ -4,7 +4,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
+#include <boost/locale.hpp>
 data_base::data_base()
 {
 	//备注:initOK变量默认是false,只有所有步骤都初始化完成,才为true.
@@ -17,7 +17,7 @@ data_base::data_base()
 
 	std::string createTableSQLite = R"(
 	CREATE TABLE IF NOT EXISTS operator ( operator TEXT, login_ID TEXT, login_Password TEXT );
-	CREATE TABLE IF NOT EXISTS accomplishment ( behavior TEXT, belong TEXT, operator TEXT, scoure REAL, school_ID TEXT, UUID TEXT );
+	CREATE TABLE IF NOT EXISTS accomplishment ( behavior TEXT, belong TEXT, operator TEXT, score REAL, school_ID TEXT, UUID TEXT );
 	CREATE TABLE IF NOT EXISTS student ( name TEXT, school_ID TEXT, school_grade TEXT, school_major TEXT );
 	)";
 	result_code = sqlite3_exec(db, createTableSQLite.c_str(), nullptr, nullptr, nullptr);
@@ -201,7 +201,7 @@ bool data_base::Accomplishment_add(
 	std::string Accomplishment_add_SQLite = R"(
 	INSERT INTO 
 	"main"."accomplishment" 
-	( "behavior", "belong", "operator", "scoure", "school_ID", "UUID" )
+	( "behavior", "belong", "operator", "score", "school_ID", "UUID" )
 	VALUES ( ?, ?, ?, ?, ?, ? );
 	)";
 
@@ -271,4 +271,125 @@ bool data_base::Accomplishment_delete(
 
 	sqlite3_finalize(stmt);//释放资源
 	return true;
+}
+
+std::string utf8_to_gbk(const std::string& utf8Str) {
+	std::string gbkStr = boost::locale::conv::between(utf8Str, "GBK", "UTF-8");
+	return gbkStr;
+}
+
+std::vector<data_student> data_base::Student_Get_Lists(
+	std::string student_name,
+	std::string student_school_ID,
+	bool isExactMatch, //是否开启全字匹配
+	bool* result
+)
+{
+	sqlite3_stmt* stmt = nullptr;
+	char* error_message = nullptr;//用于存储错误消息的地址
+	std::string Student_Get_Lists_SQLite = R"(
+	SELECT name, school_ID ,school_grade ,school_major 
+	FROM "main"."student"
+	WHERE
+	name LIKE ? OR school_ID LIKE ?;
+	)";
+	std::vector<data_student> students;
+
+	result_code = sqlite3_prepare_v2(db, Student_Get_Lists_SQLite.c_str(), (int)Student_Get_Lists_SQLite.length(), &stmt, nullptr);
+	if (result_code != SQLITE_OK)
+	{
+		sqlite3_finalize(stmt);
+		if (result != nullptr)
+		{
+			*result = false;
+		}
+		return {};
+	}
+
+	std::string pattern_student_name = student_name;
+	std::string pattern_student_school_ID = student_school_ID;
+	if (isExactMatch)
+	{
+		//开启全字匹配
+		pattern_student_name += "%";
+		pattern_student_school_ID += "%";
+	}
+	else
+	{
+		//关闭全字匹配
+		pattern_student_name = "%" + pattern_student_name + "%";
+		pattern_student_school_ID = "%" + pattern_student_school_ID + "%";
+	}
+
+	sqlite3_bind_text(stmt, 1, pattern_student_name.c_str(), (int)pattern_student_name.length(), SQLITE_TRANSIENT);//踩坑:原来绑定字符串参数,不需要加单引号!
+	sqlite3_bind_text(stmt, 2, pattern_student_school_ID.c_str(), (int)pattern_student_school_ID.length(), SQLITE_TRANSIENT);
+	while (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		// 从查询结果中提取数据并添加到 students 向量中
+		std::string name(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+		std::string schoolID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+		int grade = sqlite3_column_int(stmt, 2);
+		std::string major(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+		data_student student;
+		student.student_name = name;
+		student.student_school_ID = schoolID;
+		student.student_school_grade = grade;
+		student.student_school_major = major;
+
+		students.push_back(student);
+	}
+
+	sqlite3_finalize(stmt);
+	if (result != nullptr)
+	{
+		*result = true;
+	}
+	return students;
+}
+
+std::vector<data_accomplishment> data_base::Accomplishment_Get(std::string student_school_ID, bool* result)
+{
+	std::vector<data_accomplishment> accomplishments = {};
+	sqlite3_stmt* stmt = nullptr;
+	std::string Accomplishment_Get_SQLite = R"(
+	SELECT
+		behavior,belong,operator,score,UUID
+	FROM
+		'main'.'accomplishment';
+	WHERE
+		school_ID LIKE ?;
+	)";
+	result_code = sqlite3_prepare_v2(db, Accomplishment_Get_SQLite.c_str(), (int)Accomplishment_Get_SQLite.length(), &stmt, nullptr);
+	if (result_code != SQLITE_OK)
+	{
+		if (result != nullptr)
+		{
+			*result = false;
+		}
+		return {};
+	}
+
+	sqlite3_bind_text(stmt, 1, student_school_ID.c_str(), student_school_ID.length(), SQLITE_TRANSIENT);
+
+	while (sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		std::string behavior(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+		std::string belong(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+		std::string operator_ID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+		double score = sqlite3_column_double(stmt, 3);
+		std::string UUID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+		data_accomplishment accomplishment;
+		accomplishment.behavior = behavior;
+		accomplishment.belong = belong;
+		accomplishment.operator_login_ID = operator_ID;
+		accomplishment.score = score;
+		accomplishment.UUID = UUID;
+		accomplishments.push_back(accomplishment);
+	}
+	sqlite3_finalize(stmt);
+	if (result != nullptr)
+	{
+		*result = true;
+	}
+	return accomplishments;
 }

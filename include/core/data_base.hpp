@@ -1,6 +1,32 @@
 #pragma once
 #include"sqlite3.h"
-#include<string>
+#include <vector>
+#include <string>
+#include <codecvt>
+#include <locale>
+struct data_accomplishment
+{
+	std::string behavior;//素养行为
+	std::string belong;//奖惩所属条例
+	std::string operator_login_ID;//此素养的操作人的ID
+	float score;//分数加减
+	std::string UUID;//素养的独立ID
+};
+
+struct data_operator
+{
+	std::string operator_name;//操作人员姓名
+	std::string operator_login_ID;//操作人员账户ID
+	std::string operator_password;//操作人员密码
+};
+
+struct data_student
+{
+	std::string student_name;//姓名
+	std::string student_school_ID;//学号
+	std::string student_school_grade;//班级
+	std::string student_school_major;//专业
+};
 
 class data_base
 {
@@ -12,6 +38,7 @@ private:
 	bool initOK = false;
 	void free_data_base();//释放sqlite3
 public:
+
 	data_base();
 	~data_base();
 	inline bool isInitOK() { return initOK; }
@@ -22,9 +49,11 @@ public:
 		std::string Operator_login_ID,
 		std::string Operator_login_Password
 	);
+
 	//删除管理员
 	bool Operator_delete(std::string login_ID);
 
+	//添加学生
 	bool Student_add(
 		std::string Student_name,//姓名
 		std::string School_ID,//学号
@@ -32,6 +61,7 @@ public:
 		std::string School_major//专业
 	);
 
+	//删除学生
 	bool Student_delete(
 		std::string School_ID
 	);
@@ -42,12 +72,43 @@ public:
 		std::string behavior,
 		std::string belong,
 		std::string Operator_login_ID,
-		float scoure
+		float score
 	);
+
+	//删除素养记录
 	bool Accomplishment_delete(
 		std::string School_ID,
 		std::string Accomplishment_UUID
 	);
+
+	//返回学生列表,参数空白则返回全部学生
+	//支持全字匹配,默认关闭
+	std::vector<data_student>Student_Get_Lists(
+		std::string student_name = "",
+		std::string student_school_ID = "",
+		bool isExactMatch = false,//是否开启全字匹配
+		bool* result = nullptr//返回查询是否成功
+	);
+
+	//根据学号取某个学生的信息
+	data_student Student_Get_Data(std::string student_school_ID);
+
+	//操作者登录
+	bool Operator_Login(
+		std::string Operator_login_ID,
+		std::string Operator_login_password
+	);
+
+	//返回操作员用户列表,参数空白则返回全部操作者
+	//支持全字匹配,默认关闭
+	std::vector<data_operator> Operator_Get_Lists(
+		std::string operator_name = "",
+		std::string operator_login_ID = "",
+		bool isExactMatch = false//是否开启全字匹配
+	);
+
+	//根据学号取某个学生的所有素养信息
+	std::vector<data_accomplishment>Accomplishment_Get(std::string student_school_I,bool* result=nullptr);
 
 };
 
@@ -56,7 +117,8 @@ public:
 //NOT EXISTS operator ( operator TEXT, login_ID TEXT, login_Password TEXT );
 //CREATE TABLE
 //IF
-//NOT EXISTS accomplishment(behavior TEXT, belong TEXT, operator TEXT, scoure REAL, school_ID TEXT);
+// 
+//NOT EXISTS accomplishment(behavior TEXT, belong TEXT, operator TEXT, score REAL, school_ID TEXT);
 //CREATE TABLE
 //IF
 //NOT EXISTS student(name TEXT, school_ID TEXT, school_grade TEXT, school_major TEXT);

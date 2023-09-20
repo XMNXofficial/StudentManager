@@ -1,17 +1,28 @@
-#include "ui/student_list.hpp"
+#include  "ui/student_list.hpp"
 #include<imgui.h>
 #include<imgui_internal.h>
 #include"extern/extern.hpp"
+#include"boost/uuid/uuid.hpp"
+#include"boost/uuid/uuid_generators.hpp"
+#include"boost/uuid/uuid_io.hpp"
+
+
 void show_gui1()//学生扣分明细
 {
 }
 
 void ui_list()//学生列表
 {
+
 	ImGui::Text("查询:");
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(220);
 	ImGui::InputText("##InputText_查询学生:", buffer_StudentSelect, 1024);
+	if (ImGui::IsItemEdited())
+	{
+		std::string search = buffer_StudentSelect;
+		MainAPP.students = MainAPP.DataBase.Student_Get_Lists(search, search, false);
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("重置"))
 	{
@@ -22,18 +33,22 @@ void ui_list()//学生列表
 		//表头
 		ImGui::TableSetupColumn("学生姓名-学号");
 		ImGui::TableHeadersRow();
-		for (int i1 = 0; i1 < students.students.size(); i1++)
+		for (int i1 = 0; i1 < MainAPP.students.size(); i1++)
 		{
-			auto& student = students.students[i1];
+			auto& student = MainAPP.students[i1];
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			std::string temp(student.name + "-" + student.school_id);
+			std::string temp(student.student_name + "-" + student.student_school_ID);
 			if (ImGui::Selectable(temp.c_str(), i1 == select_student_list_index ? true : false))
 			{
 				select_student_list_index = i1;
 			}
+			if (ImGui::IsItemClicked())
+			{
+				//MainAPP.accomplishment
+			}
 		}
-
 		ImGui::EndTable();
 	}
 }
+

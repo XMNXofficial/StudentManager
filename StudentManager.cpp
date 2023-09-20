@@ -5,16 +5,28 @@
 #include "ui/student_list.hpp"//学生列表
 #include "ui/accomplishment.hpp"//学生素养详细信息
 #include "ui/DevelopWindow.hpp"
+#include "extern/extern.hpp"
 ImFont* gFont = nullptr;
 DevelopWindow Develop;
+#include <hello_imgui.h>
+
 int main()
+{
+	MainAPP.RunGUI();
+	return 0;
+}
+
+
+void StudentManager::RunGUI()
 {
 	HelloImGui::RunnerParams p;
 	p.appWindowParams.windowTitle = "APP";
 	p.appWindowParams.resizable = false; // 禁止更改大小
 	p.appWindowParams.windowGeometry.size = { 800, 600 };
 	p.imGuiWindowParams.defaultImGuiWindowType = HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
-	p.dockingParams = show_dockinggui();
+	HelloImGui::DockingParams docking_params;
+	CreateDockingParams((void*)&docking_params);
+	p.dockingParams = docking_params;
 	p.dockingParams.layoutCondition = HelloImGui::DockingLayoutCondition::ApplicationStart;
 
 	p.callbacks.LoadAdditionalFonts = []()
@@ -33,14 +45,11 @@ int main()
 	p.imGuiWindowParams.Enable_MainDockSpace_NoResize = true;
 	p.imGuiWindowParams.Enable_MainDockSpace_NoTabBar = true;
 	HelloImGui::Run(p);
-
-	return 0;
 }
 
-HelloImGui::DockingParams show_dockinggui()
+void StudentManager::CreateDockingParams(void* ptr)
 {
-	HelloImGui::DockingParams d;
-
+	HelloImGui::DockingParams* d = (HelloImGui::DockingParams*)ptr;
 	std::vector<HelloImGui::DockingSplit> s;
 
 	//创建dock空间:dock_list 显示学生列表
@@ -61,7 +70,7 @@ HelloImGui::DockingParams show_dockinggui()
 	dock_accomplishment.nodeFlags = ImGuiDockNodeFlags_NoTabBar;
 
 	s.push_back(dock_accomplishment);
-	d.dockingSplits = s;
+	d->dockingSplits = s;
 
 	std::vector<HelloImGui::DockableWindow> w;
 
@@ -89,7 +98,16 @@ HelloImGui::DockingParams show_dockinggui()
 	w.push_back(window_operate);
 	w.push_back(window_list);
 
-	d.dockableWindows = w;
+	d->dockableWindows = w;
 
-	return d;
+}
+
+StudentManager::StudentManager()
+{
+	students = DataBase.Student_Get_Lists();
+}
+
+StudentManager::~StudentManager()
+{
+
 }

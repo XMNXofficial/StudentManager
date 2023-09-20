@@ -1,33 +1,12 @@
 #include"data/student_data.hpp"
+#include"extern/extern.hpp"
 #include<iostream>
 #include<vector>
 #include<random>
 #include<string>
 namespace student_data {
 	StudentInformation::StudentInformation() {
-		// 使用随机数生成器
-		std::default_random_engine generator(time(nullptr));
-		std::uniform_real_distribution<float> scoreDistribution(0.0f, 100.0f);
-
-		// 添加10条随机数据
-		for (int i = 0; i < 10; ++i) {
-			std::string name = "Student" + std::to_string(i + 1);
-			std::string school_id = "ID" + std::to_string(i + 1);
-			std::string school_grade = "Grade" + std::to_string(i + 1);
-			std::string school_major = "Major" + std::to_string(i + 1);
-			std::string school_class = "Class" + std::to_string(i + 1);
-
-			addStudent(name, school_id, school_grade, school_major, school_class);
-
-			// 添加随机的素养信息
-			for (int j = 0; j < 3; ++j) {
-				std::string behavior = "Behavior" + std::to_string(j + 1);
-				bool isIncrease = (j % 2 == 0); // 随机选择是增加还是减少
-				float score = scoreDistribution(generator);
-
-				addAccomplishment(school_id, behavior, "test-rule", "test-operator", isIncrease, score);
-			}
-		}
+	
 	}
 
 	//添加学生信息
