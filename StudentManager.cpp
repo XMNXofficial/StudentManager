@@ -21,7 +21,7 @@ void StudentManager::RunGUI()
 {
 	HelloImGui::RunnerParams p;
 	p.appWindowParams.windowTitle = "APP";
-	p.appWindowParams.resizable = true; // 禁止更改大小
+	p.appWindowParams.resizable = false; // 禁止更改大小
 	p.appWindowParams.windowGeometry.sizeAuto = false;
 	p.appWindowParams.windowGeometry.size = { 1400, 1000 };
 	p.appWindowParams.windowGeometry.windowSizeMeasureMode = HelloImGui::WindowSizeMeasureMode::ScreenCoords;
