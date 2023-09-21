@@ -1,4 +1,5 @@
 #include"core/data_base.hpp"
+#include"extern/extern.hpp"
 #include"sqlite3.h"
 #include <iostream>
 #include <boost/uuid/uuid.hpp>
@@ -32,13 +33,15 @@ data_base::data_base()
 
 data_base::~data_base()
 {
+	select_student_list_index = -1;
 	initOK = false;
 	free_data_base();//释放sqlite3
 }
 
 void data_base::free_data_base()
 {
-	sqlite3_close(db);
+	std::printf("free:%d", sqlite3_close(db));
+	db = nullptr;
 }
 
 bool data_base::Operator_add(
@@ -355,7 +358,7 @@ std::vector<data_accomplishment> data_base::Accomplishment_Get(std::string stude
 	SELECT
 		behavior,belong,operator,score,UUID
 	FROM
-		'main'.'accomplishment';
+		'main'.'accomplishment'
 	WHERE
 		school_ID LIKE ?;
 	)";

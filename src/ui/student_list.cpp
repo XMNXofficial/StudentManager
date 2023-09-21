@@ -21,7 +21,7 @@ void ui_list()//学生列表
 	if (ImGui::IsItemEdited())
 	{
 		std::string search = buffer_StudentSelect;
-		MainAPP.students = MainAPP.DataBase.Student_Get_Lists(search, search, false);
+		MainAPP.students = MainAPP.DataBase->Student_Get_Lists(search, search, false);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("重置"))
@@ -33,19 +33,23 @@ void ui_list()//学生列表
 		//表头
 		ImGui::TableSetupColumn("学生姓名-学号");
 		ImGui::TableHeadersRow();
-		for (int i1 = 0; i1 < MainAPP.students.size(); i1++)
+		if (MainAPP.DataBase->isInitOK())
 		{
-			auto& student = MainAPP.students[i1];
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			std::string temp(student.student_name + "-" + student.student_school_ID);
-			if (ImGui::Selectable(temp.c_str(), i1 == select_student_list_index ? true : false))
+			for (int i1 = 0; i1 < MainAPP.students.size(); i1++)
 			{
-				select_student_list_index = i1;
-			}
-			if (ImGui::IsItemClicked())
-			{
-				//MainAPP.accomplishment
+				auto& student = MainAPP.students[i1];
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				std::string temp(student.student_name + "-" + student.student_school_ID);
+				if (ImGui::Selectable(temp.c_str(), i1 == select_student_list_index ? true : false))
+				{
+					select_student_list_index = i1;
+					if (select_student_list_index != -1)
+					{
+						MainAPP.accomplishment = MainAPP.DataBase->Accomplishment_Get(MainAPP.students[select_student_list_index].student_school_ID);
+					}
+				}
+
 			}
 		}
 		ImGui::EndTable();

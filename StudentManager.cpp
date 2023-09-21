@@ -21,14 +21,15 @@ void StudentManager::RunGUI()
 {
 	HelloImGui::RunnerParams p;
 	p.appWindowParams.windowTitle = "APP";
-	p.appWindowParams.resizable = false; // 禁止更改大小
-	p.appWindowParams.windowGeometry.size = { 800, 600 };
+	p.appWindowParams.resizable = true; // 禁止更改大小
+	p.appWindowParams.windowGeometry.sizeAuto = false;
+	p.appWindowParams.windowGeometry.size = { 1400, 1000 };
+	p.appWindowParams.windowGeometry.windowSizeMeasureMode = HelloImGui::WindowSizeMeasureMode::ScreenCoords;
 	p.imGuiWindowParams.defaultImGuiWindowType = HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
 	HelloImGui::DockingParams docking_params;
 	CreateDockingParams((void*)&docking_params);
 	p.dockingParams = docking_params;
 	p.dockingParams.layoutCondition = HelloImGui::DockingLayoutCondition::ApplicationStart;
-
 	p.callbacks.LoadAdditionalFonts = []()
 	{
 		ImFontGlyphRangesBuilder a;
@@ -104,10 +105,11 @@ void StudentManager::CreateDockingParams(void* ptr)
 
 StudentManager::StudentManager()
 {
-	students = DataBase.Student_Get_Lists();
+	DataBase = new data_base;
+	students = DataBase->Student_Get_Lists();
 }
 
 StudentManager::~StudentManager()
 {
-
+	delete DataBase;
 }

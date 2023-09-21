@@ -9,7 +9,7 @@ struct data_accomplishment
 	std::string behavior;//素养行为
 	std::string belong;//奖惩所属条例
 	std::string operator_login_ID;//此素养的操作人的ID
-	float score;//分数加减
+	double score = 0.0f;//分数加减
 	std::string UUID;//素养的独立ID
 };
 
@@ -108,7 +108,7 @@ public:
 	);
 
 	//根据学号取某个学生的所有素养信息
-	std::vector<data_accomplishment>Accomplishment_Get(std::string student_school_I,bool* result=nullptr);
+	std::vector<data_accomplishment>Accomplishment_Get(std::string student_school_I, bool* result = nullptr);
 
 };
 
