@@ -5,6 +5,7 @@
 #include<iostream>
 #include <format>
 #include<boost/locale.hpp>
+
 DevelopWindow::DevelopWindow()
 {
 
@@ -27,14 +28,36 @@ void DevelopWindow::gui()
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(255, 0, 0, 240));//push窗口颜色
 	ImGui::Begin("DevelopWindow");
 	ImGui::GetIO().ConfigDockingWithShift = true;
-	ImGui::Text("数据库状态:%s", MainAPP.DataBase->isInitOK() ? "初始化成功!" : "初始化失败.");
+	ImGui::Text("数据库状态:%s", MainAPP.DataBase != nullptr ? (MainAPP.DataBase->isInitOK() ? "初始化成功!" : "初始化失败.") : "未连接");
+
+	if (ImGui::Button("断开连接"))
+	{
+		delete MainAPP.DataBase;
+		MainAPP.DataBase = nullptr;
+		MainAPP.students = {};
+		MainAPP.accomplishment = {};
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("重新连接"))
+	{
+		MainAPP.DataBase = new data_base;
+		MainAPP.students = {};
+		MainAPP.accomplishment = {};
+	}
 
 	if (ImGui::Button("断开并且重连数据库"))
 	{
 		delete MainAPP.DataBase;
 		MainAPP.DataBase = nullptr;
 		MainAPP.DataBase = new data_base;
+		MainAPP.students = {};
+		MainAPP.accomplishment = {};
 
+	}
+
+	if (ImGui::Button("删除数据库(需要先断开连接)"))
+	{
+		int result = std::remove("./StudentManager.db");
 	}
 
 	ImGui::Separator();

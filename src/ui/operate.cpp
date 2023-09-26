@@ -11,11 +11,20 @@ void ui_operate()//扣分/加分面板
 		{
 			ImGui::BeginGroup();
 			static float item_length = 350;
-			ImGui::Text("当前选中学生:%s", "夕木柠昔");
-			ImGui::Text("修改姓名:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改姓名:", buffer_grade, 1024);
-			ImGui::Text("修改班级:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改年级:", buffer_name, 1024);
-			ImGui::Text("录入用户:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##录入用户:", buffer_EnterUser, 1024);
-			ImGui::Text("录入备注:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##录入备注:", buffer_remark, 1024);
+			if (select_student_list_index == -1)
+			{
+				ImGui::Text("当前选中学生:%s", "当前未选中!");
+			}
+			else
+			{
+				ImGui::Text("当前选中学生:%s-%s", MainAPP.students[select_student_list_index].student_name.c_str(), MainAPP.students[select_student_list_index].student_school_ID.c_str());
+			}
+
+
+			ImGui::Text("修改姓名:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改姓名:", buffer_input_name, 1024);
+			ImGui::Text("修改班级:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改年级:", buffer_input_grade, 1024);
+			ImGui::Text("修改学号:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改学号:", buffer_input_schoolID, 1024);
+			ImGui::Text("修改专业:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改专业:", buffer_input_major, 1024);
 			ImGui::EndGroup();
 			ImGui::SameLine();
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical | ImGuiSeparatorFlags_SpanAllColumns);

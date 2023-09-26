@@ -6,10 +6,10 @@
 #include"StudentManager.hpp"
 
 //operate
-extern char buffer_grade[1024];
-extern char buffer_name[1024];
-extern char buffer_EnterUser[1024];
-extern char buffer_remark[1024];
+extern char buffer_input_grade[1024];
+extern char buffer_input_name[1024];
+extern char buffer_input_schoolID[1024];
+extern char buffer_input_major[1024];
 extern char buffer_reason[1024];
 extern char buffer_StudentSelect[1024];
 extern int buffer_isIncreaseSource;

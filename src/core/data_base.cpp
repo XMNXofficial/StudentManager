@@ -331,7 +331,7 @@ std::vector<data_student> data_base::Student_Get_Lists(
 		// 从查询结果中提取数据并添加到 students 向量中
 		std::string name(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
 		std::string schoolID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-		int grade = sqlite3_column_int(stmt, 2);
+		std::string grade = (reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
 		std::string major(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
 		data_student student;
 		student.student_name = name;
