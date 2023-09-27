@@ -379,6 +379,84 @@ void ui_operate()//扣分/加分面板
 
 			}
 
+			if (ImGui::Button("我已确认无误,添加记录##button_accomplishment_add", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y)))
+			{
+				ImGui::OpenPopup("请再次确认!##accomplishment");
+			}
+			//pop弹出窗口
+			{
+				ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+				if (ImGui::BeginPopupModal("请再次确认!##accomplishment", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					if (select_student_list_index != -1)
+					{
+						ImGui::Text("以下是信息改动:");
+						ImGui::Separator();
+						ImGui::Text("学生信息:");
+						ImGui::Text("学生姓名:%s", MainAPP.students[select_student_list_index].student_name.c_str());
+						ImGui::Text("学生学号:%s", MainAPP.students[select_student_list_index].student_school_ID.c_str());
+						ImGui::Separator();
+						ImGui::Text("素养信息添加:");
+						if (buffer_isIncreaseSource)
+						{
+							//加分
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.151f, 1.000f, 0.000f, 1.000f));
+							ImGui::Text("性质:加分");
+							ImGui::PopStyleColor(1);
+						}
+						else
+						{
+							//扣分				
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 1.000f));
+							ImGui::Text("性质:减分");
+							ImGui::PopStyleColor(1);
+						}
+
+						ImGui::Text("行为:");
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.930f, 0.000f, 1.000f));//yellow
+						ImGui::SameLine();
+						ImGui::Text("%s", buffer_isCustomThing ? buffer_input_accomplishment_reason : (buffer_isIncreaseSource ? MainAPP.school_rule.rule_increase[select_accomplishment_customThing].thing.c_str() : MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].thing.c_str()));
+						ImGui::PopStyleColor();
+
+						ImGui::Text("分数:");
+						if (buffer_isIncreaseSource)
+						{
+							//加分
+							ImGui::SameLine();
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.151f, 1.000f, 0.000f, 1.000f));
+							ImGui::Text("加 %.1f 分", buffer_accomplishment_increase_or_decrease_source);
+							ImGui::PopStyleColor(1);
+						}
+						else
+						{
+							//扣分
+							ImGui::SameLine();
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 1.000f));
+							ImGui::Text("扣 %.1f 分", buffer_accomplishment_increase_or_decrease_source);
+							ImGui::PopStyleColor(1);
+						}
+
+
+						if (ImGui::Button("我已再次确认信息无误,确定录入"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+					}
+					else
+					{
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 0.784f));
+						ImGui::Text("修改失败!当前未选择学生!");
+						ImGui::PopStyleColor(1);
+						if (ImGui::Button("我知道了"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+					}
+					ImGui::EndPopup();
+				}
+			}
+
 			ImGui::EndTabItem();
 		}
 
