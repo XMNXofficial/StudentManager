@@ -61,6 +61,14 @@ public:
 		std::string School_major//专业
 	);
 
+	bool Student_edit(
+		std::string School_ID,
+		std::string new_Student_name,//姓名
+		std::string new_School_ID,//学号
+		std::string new_School_grade,//年级
+		std::string new_School_major//专业
+	);
+
 	//删除学生
 	bool Student_delete(
 		std::string School_ID

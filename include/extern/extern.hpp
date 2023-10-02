@@ -18,4 +18,6 @@ extern float buffer_accomplishment_increase_or_decrease_source;
 
 //list
 extern int select_student_list_index;//学生列表
+//accomplishment列表
+extern int select_accomplishment;
 extern StudentManager MainAPP;

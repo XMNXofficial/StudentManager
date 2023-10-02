@@ -159,6 +159,57 @@ bool  data_base::Student_add(
 	return true;
 }
 
+bool  data_base::Student_edit(
+	std::string School_ID,
+	std::string new_Student_name,//姓名
+	std::string new_School_ID,//学号
+	std::string new_School_grade,//年级
+	std::string new_School_major//专业
+)
+{
+	// 定义编译后的语句对象
+	sqlite3_stmt* stmt = nullptr;
+
+	// 定义要执行的SQL INSERT语句
+	std::string Student_edit_SQLite = R"(
+	UPDATE
+		"main"."student" 
+	SET
+		"name" = ? , "school_ID" = ? , "school_grade" = ? , "school_major" = ?
+	WHERE
+		"school_ID" = ?
+    )";
+
+	// 编译参数化语句
+	result_code = sqlite3_prepare_v2(db, Student_edit_SQLite.c_str(), (int)Student_edit_SQLite.length(), &stmt, nullptr);
+	if (result_code != SQLITE_OK)//编译出错
+	{
+		sqlite3_finalize(stmt);//释放资源
+		return false;
+	}
+
+	// 绑定参数
+	int idx = 1;
+	sqlite3_bind_text(stmt, idx++, new_Student_name.c_str(), (int)new_Student_name.length(), SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, idx++, new_School_ID.c_str(), (int)new_School_ID.length(), SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, idx++, new_School_grade.c_str(), (int)new_School_grade.length(), SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, idx++, new_School_major.c_str(), (int)new_School_major.length(), SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, idx++, School_ID.c_str(), (int)School_ID.length(), SQLITE_TRANSIENT);
+
+
+	// 执行语句
+	result_code = sqlite3_step(stmt);
+	if (result_code != SQLITE_DONE)//执行出错
+	{
+		sqlite3_finalize(stmt);//释放资源
+		return false;
+	}
+
+	sqlite3_finalize(stmt);//释放资源
+	return true;
+}
+
+
 bool data_base::Student_delete(
 	std::string School_ID
 )
