@@ -533,7 +533,7 @@ void ui_operate()//扣分/加分面板
 							{
 								MainAPP.DataBase->Accomplishment_add(
 									MainAPP.students[select_student_list_index].student_school_ID,
-									buffer_input_accomplishment_reason,
+									buffer_isCustomThing?(buffer_input_accomplishment_reason):(buffer_isIncreaseSource?(MainAPP.school_rule.rule_increase[buffer_]) : ()),
 									buffer_isIncreaseSource ? "加分" : "减分",
 									"",
 									(buffer_isIncreaseSource ? 1.0 : -1.0) * buffer_accomplishment_increase_or_decrease_source
