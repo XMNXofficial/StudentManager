@@ -13,7 +13,7 @@ extern char buffer_input_accomplishment_reason[1024];
 extern char buffer_StudentSelect[1024];
 extern bool buffer_isIncreaseSource;
 extern bool buffer_isCustomThing;
-extern int select_accomplishment_customThing;
+extern int select_rule_list_index;
 extern float buffer_accomplishment_increase_or_decrease_source;
 
 //list

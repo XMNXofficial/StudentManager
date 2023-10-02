@@ -267,7 +267,7 @@ void ui_operate()//扣分/加分面板
 				{
 					//如果已经是次选项,则不重置索引
 					buffer_isIncreaseSource = true;
-					select_accomplishment_customThing = 0;//重置默认索引
+					select_rule_list_index = 0;//重置默认索引
 					if (buffer_isCustomThing)
 					{
 						buffer_accomplishment_increase_or_decrease_source = 0;//如果是自定义事件,则设为0
@@ -276,7 +276,7 @@ void ui_operate()//扣分/加分面板
 					{
 						//如果是系统内置事件,则重置为第0个选项的最低分数
 						//为什么要这样子?因为imgui的slider控件不会对缓冲区进行初始化,需要我们手动初始化呢
-						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_accomplishment_customThing].minPoint;
+						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_rule_list_index].minPoint;
 					}
 				}
 			}
@@ -290,7 +290,7 @@ void ui_operate()//扣分/加分面板
 				{
 					//如果已经是次选项,则不重置索引
 					buffer_isIncreaseSource = false;
-					select_accomplishment_customThing = 0;//重置默认索引
+					select_rule_list_index = 0;//重置默认索引
 					if (buffer_isCustomThing)
 					{
 						buffer_accomplishment_increase_or_decrease_source = 0;//如果是自定义事件,则设为0
@@ -299,7 +299,7 @@ void ui_operate()//扣分/加分面板
 					{
 						//如果是系统内置事件,则重置为第0个选项的最低分数
 						//为什么要这样子?因为imgui的slider控件不会对缓冲区进行初始化,需要我们手动初始化呢
-						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].minPoint;
+						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_rule_list_index].minPoint;
 					}
 				}
 			}
@@ -315,7 +315,7 @@ void ui_operate()//扣分/加分面板
 				{
 					//如果已经是次选项,则不重置索引
 					buffer_isCustomThing = true;
-					select_accomplishment_customThing = 0;//重置默认索引
+					select_rule_list_index = 0;//重置默认索引
 					//此时是自定义事件,分数直接设为0
 					buffer_accomplishment_increase_or_decrease_source = 0;
 
@@ -328,17 +328,17 @@ void ui_operate()//扣分/加分面板
 				{
 					//如果已经是次选项,则不重置索引
 					buffer_isCustomThing = false;
-					select_accomplishment_customThing = 0;//重置默认索引
+					select_rule_list_index = 0;//重置默认索引
 
 					//此时是系统内置事件,重置为第0个选项的最低分数
 					//为什么要这样子?因为imgui的slider控件不会对缓冲区进行初始化,需要我们手动初始化呢
 					if (buffer_isIncreaseSource)
 					{
-						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_accomplishment_customThing].minPoint;
+						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_rule_list_index].minPoint;
 					}
 					else
 					{
-						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].minPoint;
+						buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_rule_list_index].minPoint;
 					}
 				}
 			}
@@ -358,15 +358,15 @@ void ui_operate()//扣分/加分面板
 				{
 					//内置加分事件
 					ImGui::SameLine();
-					if (ImGui::BeginCombo("##combo_accomplishment_customthing加分事件", MainAPP.school_rule.rule_increase[select_accomplishment_customThing].thing.c_str()))
+					if (ImGui::BeginCombo("##combo_accomplishment_customthing加分事件", MainAPP.school_rule.rule_increase[select_rule_list_index].thing.c_str()))
 					{
 						for (int i1 = 0; i1 < MainAPP.school_rule.rule_increase.size(); i1++)
 						{
-							const bool isSelected = select_accomplishment_customThing == i1;
+							const bool isSelected = select_rule_list_index == i1;
 							if (ImGui::Selectable(MainAPP.school_rule.rule_increase[i1].thing.c_str(), isSelected))
 							{
-								select_accomplishment_customThing = i1;
-								buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_accomplishment_customThing].minPoint;//重置分数缓冲区为,当前选中规则的最低分数
+								select_rule_list_index = i1;
+								buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_increase[select_rule_list_index].minPoint;//重置分数缓冲区为,当前选中规则的最低分数
 							}
 							if (isSelected)
 							{
@@ -380,15 +380,15 @@ void ui_operate()//扣分/加分面板
 				{
 					//内置扣分事件
 					ImGui::SameLine();
-					if (ImGui::BeginCombo("##combo_accomplishment_customthing减分事件", MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].thing.c_str()))
+					if (ImGui::BeginCombo("##combo_accomplishment_customthing减分事件", MainAPP.school_rule.rule_decrease[select_rule_list_index].thing.c_str()))
 					{
 						for (int i1 = 0; i1 < MainAPP.school_rule.rule_decrease.size(); i1++)
 						{
-							const bool isSelected = select_accomplishment_customThing == i1;
+							const bool isSelected = select_rule_list_index == i1;
 							if (ImGui::Selectable(MainAPP.school_rule.rule_decrease[i1].thing.c_str(), isSelected))
 							{
-								select_accomplishment_customThing = i1;
-								buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].minPoint;//重置分数缓冲区为,当前选中规则的最低分数
+								select_rule_list_index = i1;
+								buffer_accomplishment_increase_or_decrease_source = MainAPP.school_rule.rule_decrease[select_rule_list_index].minPoint;//重置分数缓冲区为,当前选中规则的最低分数
 							}
 							if (isSelected)
 							{
@@ -416,7 +416,7 @@ void ui_operate()//扣分/加分面板
 				else
 				{
 					//系统内置事件
-					auto temp = MainAPP.school_rule.rule_increase[select_accomplishment_customThing];
+					auto temp = MainAPP.school_rule.rule_increase[select_rule_list_index];
 					if (temp.minPoint != temp.maxPoint)
 					{
 						ImGui::SliderFloat("##SlidetInt_accomplishment_increase", &buffer_accomplishment_increase_or_decrease_source, temp.minPoint, temp.maxPoint, "当前:%.1f分");
@@ -442,7 +442,7 @@ void ui_operate()//扣分/加分面板
 				else
 				{
 					//系统内置事件
-					auto temp = MainAPP.school_rule.rule_decrease[select_accomplishment_customThing];
+					auto temp = MainAPP.school_rule.rule_decrease[select_rule_list_index];
 					if (temp.minPoint != temp.maxPoint)
 					{
 						ImGui::SliderFloat("##SlidetInt_accomplishment_decrease", &buffer_accomplishment_increase_or_decrease_source, temp.minPoint, temp.maxPoint, "当前:-%.1f分");
@@ -507,7 +507,7 @@ void ui_operate()//扣分/加分面板
 							ImGui::Text("行为:");
 							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.930f, 0.000f, 1.000f));//yellow
 							ImGui::SameLine();
-							ImGui::Text("%s", buffer_isCustomThing ? buffer_input_accomplishment_reason : (buffer_isIncreaseSource ? MainAPP.school_rule.rule_increase[select_accomplishment_customThing].thing.c_str() : MainAPP.school_rule.rule_decrease[select_accomplishment_customThing].thing.c_str()));
+							ImGui::Text("%s", buffer_isCustomThing ? buffer_input_accomplishment_reason : (buffer_isIncreaseSource ? MainAPP.school_rule.rule_increase[select_rule_list_index].thing.c_str() : MainAPP.school_rule.rule_decrease[select_rule_list_index].thing.c_str()));
 							ImGui::PopStyleColor();
 
 							ImGui::Text("分数:");
@@ -533,7 +533,7 @@ void ui_operate()//扣分/加分面板
 							{
 								MainAPP.DataBase->Accomplishment_add(
 									MainAPP.students[select_student_list_index].student_school_ID,
-									buffer_isCustomThing?(buffer_input_accomplishment_reason):(buffer_isIncreaseSource?(MainAPP.school_rule.rule_increase[buffer_]) : ()),
+									buffer_isCustomThing ? (buffer_input_accomplishment_reason) : (buffer_isIncreaseSource ? (MainAPP.school_rule.rule_increase[select_rule_list_index].thing) : (MainAPP.school_rule.rule_decrease[select_rule_list_index].thing)),
 									buffer_isIncreaseSource ? "加分" : "减分",
 									"",
 									(buffer_isIncreaseSource ? 1.0 : -1.0) * buffer_accomplishment_increase_or_decrease_source
