@@ -50,10 +50,10 @@ void ui_list()//学生列表
 						if (select_student_list_index != -1)
 						{
 							MainAPP.accomplishment = MainAPP.DataBase->Accomplishment_Get(MainAPP.students[select_student_list_index].student_school_ID);
-							strcpy(buffer_input_name, MainAPP.students[i1].student_name.c_str());
-							strcpy(buffer_input_grade, MainAPP.students[i1].student_school_grade.c_str());
-							strcpy(buffer_input_schoolID, MainAPP.students[i1].student_school_ID.c_str());
-							strcpy(buffer_input_major, MainAPP.students[i1].student_school_major.c_str());
+							strcpy(buffer_input_editStudent_name, MainAPP.students[i1].student_name.c_str());
+							strcpy(buffer_input_editStudent_grade, MainAPP.students[i1].student_school_grade.c_str());
+							strcpy(buffer_input_editStudent_schoolID, MainAPP.students[i1].student_school_ID.c_str());
+							strcpy(buffer_input_editStudent_major, MainAPP.students[i1].student_school_major.c_str());
 						}
 
 					}

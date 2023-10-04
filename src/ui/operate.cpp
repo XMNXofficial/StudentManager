@@ -9,6 +9,165 @@ void ui_operate()//扣分/加分面板
 	{
 
 		static float item_length = 350;
+
+		if (ImGui::BeginTabItem("学生建档"))
+		{
+			ImGui::Text("添加学生信息:");
+
+			ImGui::Text("学生姓名:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_新建学生姓名:", buffer_input_addStudent_name, 1024);
+			ImGui::Text("年级班级:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_新建学生年级:", buffer_input_addStudent_grade, 1024);
+			ImGui::Text("学生学号:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_新建学生学号:", buffer_input_addStudent_schoolID, 1024);
+			ImGui::Text("学生专业:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_新建学生专业:", buffer_input_addStudent_major, 1024);
+			if (ImGui::Button("我已确认无误,添加记录##button_AddStudent_我已确认无误,添加记录", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y)))
+			{
+				ImGui::OpenPopup("请再次确认!##Popup_window_AddStudent_请再次确认!");
+			}
+
+			static bool isShowConfirmWindow = false;
+			static bool isAddOK = false;
+
+			//Popup弹出确认窗口
+			{
+				if (ImGui::BeginPopupModal("请再次确认!##Popup_window_AddStudent_请再次确认!", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					if (buffer_input_addStudent_grade[0] != 0 &&
+						buffer_input_addStudent_major[0] != 0 &&
+						buffer_input_addStudent_name[0] != 0 &&
+						buffer_input_addStudent_schoolID != 0
+						)
+					{
+						//四个信息都输入了
+						ImGui::Text("新建学生:");
+						ImGui::Separator();
+
+						//姓名
+						ImGui::Text("学生姓名:");
+						ImGui::SameLine();
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.000f, 0.750f, 1.000f, 1.000f));
+						ImGui::Text("%s", buffer_input_addStudent_name);
+						ImGui::PopStyleColor(1);
+
+						//学号
+						ImGui::Text("学生学号:");
+						ImGui::SameLine();
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.000f, 0.750f, 1.000f, 1.000f));
+						ImGui::Text("%s", buffer_input_addStudent_schoolID);
+						ImGui::PopStyleColor(1);
+
+						//年级
+						ImGui::Text("学生姓名:");
+						ImGui::SameLine();
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.000f, 0.750f, 1.000f, 1.000f));
+						ImGui::Text("%s", buffer_input_addStudent_grade);
+						ImGui::PopStyleColor(1);
+
+						//专业
+						ImGui::Text("学生专业:");
+						ImGui::SameLine();
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.000f, 0.750f, 1.000f, 1.000f));
+						ImGui::Text("%s", buffer_input_addStudent_major);
+						ImGui::PopStyleColor(1);
+
+
+						//确认按钮
+						if (ImGui::Button("我已再次确认信息无误,确定录入。##button_AddStudent_confirm"))
+						{
+							//添加学生
+							isAddOK = MainAPP.DataBase->Student_add(
+								buffer_input_addStudent_name,
+								buffer_input_addStudent_schoolID,
+								buffer_input_addStudent_grade,
+								buffer_input_addStudent_major
+							);
+							//弹出执行结果确认窗口
+							isShowConfirmWindow = true;
+							ImGui::CloseCurrentPopup();
+						}
+
+					}
+					else
+					{
+						//有任意信息没有输入
+						if (ImGui::Button("我知道了。##button_AddStudent_error"))
+						{
+							//无需弹出执行结果确认窗口
+							isAddOK = false;
+							isShowConfirmWindow = false;
+							ImGui::CloseCurrentPopup();
+						}
+					}
+					ImGui::EndPopup();
+				}
+			}
+
+			if (isShowConfirmWindow)
+			{
+				ImGui::OpenPopup("执行结果:##Popup_window_AddStudent_result_执行结果:");
+			}
+
+			//Popup弹出结果窗口
+			{
+				if (ImGui::BeginPopupModal("执行结果:##Popup_window_AddStudent_result_执行结果:", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					if (isAddOK)
+					{
+						//执行成功
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.550f, 1.000f, 0.000f, 1.000f));
+						ImGui::Text("执行成功!");
+						ImGui::PopStyleColor();
+
+						ImGui::Text("因为你改动了学生信息,系统将重新刷新学生列表。");
+						ImGui::Text("如需对当前学生继续改动,请重新选择。");
+						if (ImGui::Button("我知道了##Button_AddStudent_confirm_OK_我知道了"))
+						{
+							ImGui::CloseCurrentPopup();
+
+							//数据有变动,重置学生列表,重新获取学生信息
+							MainAPP.students = MainAPP.DataBase->Student_Get_Lists();
+							select_student_list_index = -1;
+							MainAPP.accomplishment = {};//重置素养列表
+							buffer_input_addStudent_schoolID[0] = 0;
+							buffer_input_addStudent_name[0] = 0;
+							buffer_input_addStudent_major[0] = 0;
+							buffer_input_addStudent_grade[0] = 0;
+
+							isShowConfirmWindow = false;
+							isAddOK = false;
+						}
+					}
+					else
+					{
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 1.000f));
+						ImGui::Text("执行失败!");
+						ImGui::PopStyleColor();
+
+						ImGui::Text("原因:");
+						ImGui::SameLine();
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 0.000f, 1.000f));
+						if (MainAPP.DataBase->Get_ResultCode() == 19)
+						{
+							ImGui::Text("学生学号ID重复了!");
+						}
+						else
+						{
+							ImGui::Text("未知原因!错误号:%d", MainAPP.DataBase->Get_ResultCode());
+						}
+						ImGui::PopStyleColor();
+						if (ImGui::Button("我知道了##Button_AddStudent_confirm_ERROR_我知道了"))
+						{
+							ImGui::CloseCurrentPopup();
+							isShowConfirmWindow = false;
+							isAddOK = false;
+						}
+					}
+
+					ImGui::EndPopup();
+				}
+			}
+
+			ImGui::EndTabItem();
+		}
+
 		if (ImGui::BeginTabItem("修改学生信息##TabItem_student_edit_student_information"))
 		{
 			ImGui::BeginGroup();
@@ -22,10 +181,10 @@ void ui_operate()//扣分/加分面板
 			}
 
 
-			ImGui::Text("修改姓名:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改姓名:", buffer_input_name, 1024);
-			ImGui::Text("修改班级:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改年级:", buffer_input_grade, 1024);
-			ImGui::Text("修改学号:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改学号:", buffer_input_schoolID, 1024);
-			ImGui::Text("修改专业:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##修改专业:", buffer_input_major, 1024);
+			ImGui::Text("修改姓名:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_修改学生姓名:", buffer_input_editStudent_name, 1024);
+			ImGui::Text("年级班级:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_修改学生年级:", buffer_input_editStudent_grade, 1024);
+			ImGui::Text("修改学号:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_修改学生学号:", buffer_input_editStudent_schoolID, 1024);
+			ImGui::Text("修改专业:");	ImGui::SameLine();	ImGui::SetNextItemWidth(item_length);	ImGui::InputText("##input_修改学生专业:", buffer_input_editStudent_major, 1024);
 			ImGui::EndGroup();
 
 			ImGui::SameLine();
@@ -47,9 +206,9 @@ void ui_operate()//扣分/加分面板
 
 			static bool isEditOK_for_resultShow = false;//这个用于备份,因为openpopup只能执行一次,不能放在主循环里,因此判断isEditOK后执行openpopup必须只能执行一次,执行完之后重置isEditOK.而被openpopup的弹窗,是在重置之后才执行,因此需要一个备份
 
-			if (ImGui::Button("我已确认无误,添加记录", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y)))
+			if (ImGui::Button("我已确认无误,添加记录##button_EditStudent_我已确认无误,添加记录!", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y)))
 			{
-				ImGui::OpenPopup("请再次确认!");
+				ImGui::OpenPopup("请再次确认!##Popup_window_EditStudent_请再次确认!");
 			}
 			//pop弹出窗口
 			{
@@ -58,7 +217,7 @@ void ui_operate()//扣分/加分面板
 
 				//这里备注一份关于popup的个人心得,
 				//open是打开,close是关闭,end是暂时结束(close之后,begin返回false.而end之后,begin返回true)
-				if (ImGui::BeginPopupModal("请再次确认!", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				if (ImGui::BeginPopupModal("请再次确认!##Popup_window_EditStudent_请再次确认!", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 				{
 					if (select_student_list_index != -1)
 					{
@@ -67,7 +226,7 @@ void ui_operate()//扣分/加分面板
 						ImGui::Separator();
 
 						//学号
-						if (MainAPP.students[select_student_list_index].student_school_ID == buffer_input_schoolID)
+						if (MainAPP.students[select_student_list_index].student_school_ID == buffer_input_editStudent_schoolID)
 						{
 							//学号未被修改
 							ImGui::Text("学号是否更改:");
@@ -85,14 +244,14 @@ void ui_operate()//扣分/加分面板
 							ImGui::PopStyleColor(1);
 							ImGui::Text("旧学生学号:%s", MainAPP.students[select_student_list_index].student_school_ID.c_str());
 							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.818f, 0.306f, 1.000f, 0.784f));
-							ImGui::Text("新学生学号:%s", buffer_input_schoolID);
+							ImGui::Text("新学生学号:%s", buffer_input_editStudent_schoolID);
 							ImGui::PopStyleColor(1);
 						}
 						ImGui::Separator();
 
 
 						//姓名
-						if (MainAPP.students[select_student_list_index].student_name == buffer_input_name)
+						if (MainAPP.students[select_student_list_index].student_name == buffer_input_editStudent_name)
 						{
 							//姓名未被修改
 							ImGui::Text("姓名是否更改:");
@@ -110,13 +269,13 @@ void ui_operate()//扣分/加分面板
 							ImGui::PopStyleColor(1);
 							ImGui::Text("旧学生姓名:%s", MainAPP.students[select_student_list_index].student_name.c_str());
 							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.818f, 0.306f, 1.000f, 0.784f));
-							ImGui::Text("新学生姓名:%s", buffer_input_name);
+							ImGui::Text("新学生姓名:%s", buffer_input_editStudent_name);
 							ImGui::PopStyleColor(1);
 
 						}
 						ImGui::Separator();
 
-						if (MainAPP.students[select_student_list_index].student_school_grade == buffer_input_grade)
+						if (MainAPP.students[select_student_list_index].student_school_grade == buffer_input_editStudent_grade)
 						{
 							//班级未被更改
 							ImGui::Text("班级是否更改");
@@ -134,7 +293,7 @@ void ui_operate()//扣分/加分面板
 							ImGui::PopStyleColor(1);
 							ImGui::Text("旧学生班级:%s", MainAPP.students[select_student_list_index].student_school_grade.c_str());
 							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.818f, 0.306f, 1.000f, 0.784f));
-							ImGui::Text("新学生班级:%s", buffer_input_grade);
+							ImGui::Text("新学生班级:%s", buffer_input_editStudent_grade);
 							ImGui::PopStyleColor(1);
 						}
 						ImGui::Separator();
@@ -154,10 +313,10 @@ void ui_operate()//扣分/加分面板
 							//可以理解为openpopup是异步的
 							isEditOK = MainAPP.DataBase->Student_edit(
 								MainAPP.students[select_student_list_index].student_school_ID,
-								buffer_input_name,
-								buffer_input_schoolID,
-								buffer_input_grade,
-								buffer_input_major
+								buffer_input_editStudent_name,
+								buffer_input_editStudent_schoolID,
+								buffer_input_editStudent_grade,
+								buffer_input_editStudent_major
 							);
 							isEditing = true;
 						}
@@ -215,10 +374,10 @@ void ui_operate()//扣分/加分面板
 						MainAPP.students = MainAPP.DataBase->Student_Get_Lists();
 						select_student_list_index = -1;
 						MainAPP.accomplishment = {};//重置素养列表
-						buffer_input_schoolID[0] = 0;
-						buffer_input_name[0] = 0;
-						buffer_input_major[0] = 0;
-						buffer_input_grade[0] = 0;
+						buffer_input_editStudent_schoolID[0] = 0;
+						buffer_input_editStudent_name[0] = 0;
+						buffer_input_editStudent_major[0] = 0;
+						buffer_input_editStudent_grade[0] = 0;
 
 						ImGui::CloseCurrentPopup();
 					}
@@ -228,7 +387,7 @@ void ui_operate()//扣分/加分面板
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("添加/删除学生素养##TabItem_student_accomplishment_add_or_delete"))
+		if (ImGui::BeginTabItem("添加学生素养##TabItem_student_accomplishment_add_or_delete"))
 		{
 			if (select_student_list_index == -1)
 			{
@@ -261,7 +420,7 @@ void ui_operate()//扣分/加分面板
 
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.151f, 1.000f, 0.000f, 1.000f));
-			if (ImGui::SmallButton("加分模式##button_accomplishment_increaseSource_yes"))
+			if (ImGui::SmallButton("加分模式##button_AddAccomplishment_increaseSource_yes"))
 			{
 				if (buffer_isIncreaseSource != true)
 				{
@@ -466,8 +625,9 @@ void ui_operate()//扣分/加分面板
 				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				if (ImGui::BeginPopupModal("请再次确认!##accomplishment", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 				{
-					if (select_student_list_index != -1)
+					if (select_student_list_index != -1 && buffer_accomplishment_increase_or_decrease_source != 0.0f)//如果index是-1或分数为0,则不能 添加学生,这里的异常会在else分支里处理
 					{
+
 						if (buffer_isCustomThing == true && buffer_input_accomplishment_reason[0] == 0)
 						{
 							//如果是自定义事件,而且忘记填写原因
@@ -532,11 +692,10 @@ void ui_operate()//扣分/加分面板
 							if (ImGui::Button("我已再次确认信息无误,确定录入"))
 							{
 								MainAPP.DataBase->Accomplishment_add(
-									MainAPP.students[select_student_list_index].student_school_ID,
-									buffer_isCustomThing ? (buffer_input_accomplishment_reason) : (buffer_isIncreaseSource ? (MainAPP.school_rule.rule_increase[select_rule_list_index].thing) : (MainAPP.school_rule.rule_decrease[select_rule_list_index].thing)),
-									buffer_isIncreaseSource ? "加分" : "减分",
-									"",
-									(buffer_isIncreaseSource ? 1.0 : -1.0) * buffer_accomplishment_increase_or_decrease_source
+									MainAPP.students[select_student_list_index].student_school_ID,//ID
+									buffer_isCustomThing ? (buffer_input_accomplishment_reason) : (buffer_isIncreaseSource ? (MainAPP.school_rule.rule_increase[select_rule_list_index].thing) : (MainAPP.school_rule.rule_decrease[select_rule_list_index].thing)),//行为
+									buffer_isIncreaseSource ? "加分" : "减分",//条款
+									(buffer_isIncreaseSource ? 1.0 : -1.0) * buffer_accomplishment_increase_or_decrease_source//分数
 								);
 								MainAPP.accomplishment = MainAPP.DataBase->Accomplishment_Get(MainAPP.students[select_student_list_index].student_school_ID);
 								ImGui::CloseCurrentPopup();
@@ -545,9 +704,18 @@ void ui_operate()//扣分/加分面板
 					}
 					else
 					{
-						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 0.784f));
-						ImGui::Text("修改失败!当前未选择学生!");
-						ImGui::PopStyleColor(1);
+						if (select_student_list_index == -1)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 0.784f));
+							ImGui::Text("修改失败!当前未选择学生!");
+							ImGui::PopStyleColor(1);
+						}
+						else if (buffer_accomplishment_increase_or_decrease_source == 0.0f)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 0.000f, 0.000f, 0.784f));
+							ImGui::Text("修改失败!分数不能为0!");
+							ImGui::PopStyleColor(1);
+						}
 						if (ImGui::Button("我知道了"))
 						{
 							ImGui::CloseCurrentPopup();

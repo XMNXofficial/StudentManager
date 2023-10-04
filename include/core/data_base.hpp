@@ -8,7 +8,6 @@ struct data_accomplishment
 {
 	std::string behavior;//素养行为
 	std::string belong;//奖惩所属条例
-	std::string operator_login_ID;//此素养的操作人的ID
 	double score = 0.0f;//分数加减
 	std::string UUID;//素养的独立ID
 };
@@ -79,8 +78,15 @@ public:
 		std::string School_ID,
 		std::string behavior,
 		std::string belong,
-		std::string Operator_login_ID,
 		float score
+	);
+
+	//编辑素养记录,以学生ID以及素养UUID作为参数
+	bool Accomplishment_edit(
+		std::string UUID,
+		std::string new_behavior,
+		std::string new_belong,
+		float new_score
 	);
 
 	//删除素养记录
@@ -117,7 +123,9 @@ public:
 
 	//根据学号取某个学生的所有素养信息
 	std::vector<data_accomplishment>Accomplishment_Get(std::string student_school_I, bool* result = nullptr);
-
+	
+	//获取最后执行结果
+	int Get_ResultCode();
 };
 
 //CREATE TABLE

@@ -18,9 +18,10 @@ data_base::data_base()
 
 	std::string createTableSQLite = R"(
 	CREATE TABLE IF NOT EXISTS operator ( operator TEXT, login_ID TEXT, login_Password TEXT );
-	CREATE TABLE IF NOT EXISTS accomplishment ( behavior TEXT, belong TEXT, operator TEXT, score REAL, school_ID TEXT, UUID TEXT );
-	CREATE TABLE IF NOT EXISTS student ( name TEXT, school_ID TEXT, school_grade TEXT, school_major TEXT );
+	CREATE TABLE IF NOT EXISTS accomplishment ( behavior TEXT, belong TEXT, score REAL, school_ID TEXT, UUID TEXT );
+	CREATE TABLE IF NOT EXISTS student ( name TEXT, school_ID TEXT UNIQUE , school_grade TEXT, school_major TEXT );
 	)";
+	//UNIQUE用来约束school_ID唯一
 	result_code = sqlite3_exec(db, createTableSQLite.c_str(), nullptr, nullptr, nullptr);
 	if (result_code != SQLITE_OK)
 	{
@@ -177,7 +178,7 @@ bool  data_base::Student_edit(
 	SET
 		"name" = ? , "school_ID" = ? , "school_grade" = ? , "school_major" = ?
 	WHERE
-		"school_ID" = ?
+		"school_ID" = ? ;
     )";
 
 	// 编译参数化语句
@@ -247,7 +248,6 @@ bool data_base::Accomplishment_add(
 	std::string School_ID,
 	std::string behavior,
 	std::string belong,
-	std::string Operator_login_ID,
 	float scoure
 )
 {
@@ -255,8 +255,8 @@ bool data_base::Accomplishment_add(
 	std::string Accomplishment_add_SQLite = R"(
 	INSERT INTO 
 	"main"."accomplishment" 
-	( "behavior", "belong", "operator", "score", "school_ID", "UUID" )
-	VALUES ( ?, ?, ?, ?, ?, ? );
+	( "behavior", "belong", "score", "school_ID", "UUID" )
+	VALUES ( ?, ?, ?, ?, ? );
 	)";
 
 	//uuid
@@ -276,7 +276,6 @@ bool data_base::Accomplishment_add(
 	int idx = 1;
 	sqlite3_bind_text(stmt, idx++, behavior.c_str(), (int)behavior.length(), SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, idx++, belong.c_str(), (int)belong.length(), SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, idx++, Operator_login_ID.c_str(), (int)Operator_login_ID.length(), SQLITE_TRANSIENT);
 	sqlite3_bind_double(stmt, idx++, scoure);
 	sqlite3_bind_text(stmt, idx++, School_ID.c_str(), (int)School_ID.length(), SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, idx++, uuid_str.c_str(), (int)uuid_str.length(), SQLITE_TRANSIENT);  // 填写 "UUID" 字段的值
@@ -291,6 +290,51 @@ bool data_base::Accomplishment_add(
 	sqlite3_finalize(stmt);
 	return true;
 }
+
+bool data_base::Accomplishment_edit(
+	std::string UUID,
+	std::string new_behavior,
+	std::string new_belong,
+	float new_score
+)
+{
+	sqlite3_stmt* stmt = nullptr;//查询语句参数化的缓冲区
+	std::string Accomplishment_edit_SQLite = R"(
+	UPDATE
+		"main"."accomplishment" 
+	SET
+		"behavior" = ? , "belong" = ? , "score" = ? 
+	WHERE
+		"UUID" = ?;
+	)";
+
+	//编译参数化语句
+	result_code = sqlite3_prepare_v2(db, Accomplishment_edit_SQLite.c_str(), (int)Accomplishment_edit_SQLite.length(), &stmt, nullptr);
+	if (result_code != SQLITE_OK)//判断是否编译成功
+	{
+		sqlite3_finalize(stmt);
+		return false;
+	}
+
+	//绑定参数
+	int idx = 1;
+	sqlite3_bind_text(stmt, idx++, new_behavior.c_str(), (int)new_behavior.length(), SQLITE_TRANSIENT);//素养行为
+	sqlite3_bind_text(stmt, idx++, new_belong.c_str(), (int)new_belong.length(), SQLITE_TRANSIENT);//所属条款
+	sqlite3_bind_double(stmt, idx++, new_score);//分数
+	sqlite3_bind_text(stmt, idx++, UUID.c_str(), (int)UUID.length(), SQLITE_TRANSIENT); //UUID
+
+	result_code = sqlite3_step(stmt);//执行语句
+	if (result_code != SQLITE_DONE)//执行失败
+	{
+		sqlite3_finalize(stmt);
+		return false;
+	}
+
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+
 
 bool data_base::Accomplishment_delete(
 	std::string School_ID,
@@ -407,7 +451,7 @@ std::vector<data_accomplishment> data_base::Accomplishment_Get(std::string stude
 	sqlite3_stmt* stmt = nullptr;
 	std::string Accomplishment_Get_SQLite = R"(
 	SELECT
-		behavior,belong,operator,score,UUID
+		behavior,belong,score,UUID
 	FROM
 		'main'.'accomplishment'
 	WHERE
@@ -429,13 +473,11 @@ std::vector<data_accomplishment> data_base::Accomplishment_Get(std::string stude
 	{
 		std::string behavior(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
 		std::string belong(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-		std::string operator_ID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-		double score = sqlite3_column_double(stmt, 3);
-		std::string UUID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+		double score = sqlite3_column_double(stmt, 2);
+		std::string UUID(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
 		data_accomplishment accomplishment;
 		accomplishment.behavior = behavior;
 		accomplishment.belong = belong;
-		accomplishment.operator_login_ID = operator_ID;
 		accomplishment.score = score;
 		accomplishment.UUID = UUID;
 		accomplishments.push_back(accomplishment);
@@ -446,4 +488,10 @@ std::vector<data_accomplishment> data_base::Accomplishment_Get(std::string stude
 		*result = true;
 	}
 	return accomplishments;
+}
+
+//获取最后执行结果
+int data_base::Get_ResultCode()
+{
+	return result_code;
 }
