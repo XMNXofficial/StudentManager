@@ -38,6 +38,7 @@ void StudentManager::RunGUI()
 		a.BuildRanges(&b);
 		gFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyhbd.ttc", 40.0f, nullptr, b.Data); };
 	//p.imGuiWindowParams.tweakedTheme = { ImGuiTheme::ImGuiTheme_ImGuiColorsLight,ImGuiTheme::ImGuiThemeTweaks() };
+	p.callbacks.ShowMenus = []() {ImGui::Text("版权所有:XMNXofficial"); };
 	p.imGuiWindowParams.showMenuBar = true;
 	p.imGuiWindowParams.showMenu_View = false;//不显示默认的view菜单
 	p.imGuiWindowParams.showStatusBar = false;
@@ -80,7 +81,7 @@ void StudentManager::CreateDockingParams(void* ptr)
 	HelloImGui::DockableWindow window_accomplishment;
 	window_accomplishment.label = "window_accomplishment";//设置窗口标题
 	window_accomplishment.dockSpaceName = "dock_accomplishment";//把窗口放在dock空间中
-	window_accomplishment.GuiFunction = [] { ui_accomplishment(); Develop.gui(); };//界面渲染
+	window_accomplishment.GuiFunction = [] { ui_accomplishment();/* Develop.gui();*/ };//界面渲染
 
 	//创建dock窗口:window_operate 学生操作面板
 	HelloImGui::DockableWindow window_operate;

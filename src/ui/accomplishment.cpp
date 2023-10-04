@@ -11,7 +11,7 @@ void ui_accomplishment()
 	}
 	else
 	{
-		ImGui::Text("当前选中学生:%s-%s", MainAPP.students[select_student_list_index].student_name.c_str(), MainAPP.students[select_student_list_index].student_school_ID.c_str());
+		ImGui::Text("当前选中学生:%s-%s\t(右键可以编辑/删除!)", MainAPP.students[select_student_list_index].student_name.c_str(), MainAPP.students[select_student_list_index].student_school_ID.c_str());
 	}
 	//ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable
 	//| ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti

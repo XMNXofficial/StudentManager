@@ -64,11 +64,11 @@ void DevelopWindow::gui()
 	{
 		if (ImGui::Button("插入测试数据"))
 		{
-			MainAPP.DataBase->Operator_add("陈强", "ChenQiang", "WBIOF974");
-			MainAPP.DataBase->Student_add("周豪", "202235010751", "2022", "计算机科学与技术");
-			MainAPP.DataBase->Student_add("柠昔", "202235010700", "2022", "计算机科学与技术");
-			MainAPP.DataBase->Accomplishment_add("202235010751", "JAVA语言大赛一等奖", "第五条", 5.0);
-			MainAPP.DataBase->Accomplishment_add("202235010700", "驾驶证", "第四条", 3.0);
+			//MainAPP.DataBase->Operator_add("陈强", "ChenQiang", "WBIOF974");
+			//MainAPP.DataBase->Student_add("周豪", "202235010751", "2022", "计算机科学与技术");
+			//MainAPP.DataBase->Student_add("柠昔", "202235010700", "2022", "计算机科学与技术");
+			//MainAPP.DataBase->Accomplishment_add("202235010751", "JAVA语言大赛一等奖", "第五条", 5.0);
+			//MainAPP.DataBase->Accomplishment_add("202235010700", "驾驶证", "第四条", 3.0);
 		}
 	}
 	{
